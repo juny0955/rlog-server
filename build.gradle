@@ -32,7 +32,7 @@ ext {
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-webmvc'
     implementation 'io.grpc:grpc-services'
-    implementation 'org.springframework.grpc:spring-grpc-server-web-spring-boot-starter'
+    implementation 'org.springframework.grpc:spring-grpc-server-spring-boot-starter'
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     annotationProcessor 'org.projectlombok:lombok'
