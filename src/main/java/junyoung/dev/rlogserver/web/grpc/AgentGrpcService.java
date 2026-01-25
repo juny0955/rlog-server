@@ -1,4 +1,4 @@
-package junyoung.dev.rlogserver.grpc;
+package junyoung.dev.rlogserver.web.grpc;
 
 import org.springframework.grpc.server.service.GrpcService;
 
