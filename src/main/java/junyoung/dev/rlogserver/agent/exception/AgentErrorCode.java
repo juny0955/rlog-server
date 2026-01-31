@@ -11,8 +11,8 @@ public enum AgentErrorCode implements ErrorCode {
 	NOT_FOUND("AGENT-NOT-FOUND", HttpStatus.NOT_FOUND, "에이전트를 찾을 수 없습니다."),
 	REFRESH_TOKEN_NOT_FOUND("AGENT-REFRESH-TOKEN-NOT-FOUND", HttpStatus.UNAUTHORIZED, "유효하지 않은 리프레시 토큰입니다."),
 	REFRESH_TOKEN_EXPIRED("AGENT-REFRESH-TOKEN-EXPIRED", HttpStatus.UNAUTHORIZED, "리프레시 토큰이 만료되었습니다."),
-	INVALID_ACCESS_TOKEN("AGENT-INVALID-ACCESS-TOKEN", HttpStatus.UNAUTHORIZED, "유효하지 않은 액세스 토큰입니다."),
-	ALREADY_REGISTERED("AGENT-ALREADY-REGISTERED", HttpStatus.CONFLICT, "이미 등록된 에이전트입니다.");
+
+	;
 
 	private final String code;
 	private final HttpStatus status;

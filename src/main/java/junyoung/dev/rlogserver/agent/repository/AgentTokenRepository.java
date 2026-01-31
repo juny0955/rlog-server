@@ -3,6 +3,7 @@ package junyoung.dev.rlogserver.agent.repository;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -14,4 +15,8 @@ public interface AgentTokenRepository extends JpaRepository<AgentRefreshToken, L
 		"JOIN FETCH t.agent " +
 		"WHERE t.tokenHash = :tokenHash")
 	Optional<AgentRefreshToken> findByTokenHashWithAgent(@Param("tokenHash") String tokenHash);
+
+	@Modifying
+	@Query("UPDATE AgentRefreshToken t SET t.status = 'REVOKED' WHERE t.agent.id = :agentId AND t.status = 'ACTIVE'")
+	void revokeAllActiveByAgentId(@Param("agentId") Long agentId);
 }

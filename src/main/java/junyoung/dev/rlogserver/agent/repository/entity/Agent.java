@@ -1,6 +1,7 @@
 package junyoung.dev.rlogserver.agent.repository.entity;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -32,6 +33,9 @@ public class Agent {
 
 	@Column(name = "project_id", nullable = false)
 	private Long projectId;
+
+	@Column(name = "agent_uuid", nullable = false, unique = true)
+	private UUID agentUuid;
 
 	@Column(name = "hostname")
 	private String hostname;
@@ -65,6 +69,7 @@ public class Agent {
 	) {
 		return Agent.builder()
 			.projectId(projectId)
+			.agentUuid(UUID.randomUUID())
 			.hostname(hostname)
 			.os(os)
 			.osVersion(osVersion)
@@ -84,5 +89,12 @@ public class Agent {
 
 	public void updateLastSeen() {
 		this.lastSeenAt = LocalDateTime.now();
+	}
+
+	public void updateInfo(String hostname, String os, String osVersion, String ip) {
+		this.hostname = hostname;
+		this.os = os;
+		this.osVersion = osVersion;
+		this.ip = ip;
 	}
 }

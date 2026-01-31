@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -25,11 +24,12 @@ public class AgentJwtTokenProvider {
 		this.expirationTime = accessExpirationTime;
 	}
 
-	public String generateToken(Long agentId) {
+	public String generateToken(Long agentId, Long projectId) {
 		Date now = new Date();
 
 		return Jwts.builder()
 			.subject(String.valueOf(agentId))
+			.claim("projectId", projectId)
 			.issuedAt(now)
 			.expiration(new Date(now.getTime() + expirationTime))
 			.signWith(secretKey)
@@ -58,19 +58,4 @@ public class AgentJwtTokenProvider {
 		return Long.parseLong(claims.getSubject());
 	}
 
-	public boolean isTokenExpired(String token) {
-		try {
-			Claims claims = Jwts.parser()
-				.verifyWith(secretKey)
-				.build()
-				.parseSignedClaims(token)
-				.getPayload();
-
-			return claims.getExpiration().before(new Date());
-		} catch (ExpiredJwtException e) {
-			return true;
-		} catch (JwtException | IllegalArgumentException e) {
-			return true;
-		}
-	}
 }

@@ -16,12 +16,13 @@ message RegisterRequest {
     string hostname = 2;
     string os = 3;
     string os_version = 4;
+    optional string agent_uuid = 5;  // 재등록 시 사용
 }
 
 message RegisterResponse {
     bool success = 1;
 
-    string agent_id = 2;
+    string agent_uuid = 2;
     string access_token = 3;
     string refresh_token = 4;
 

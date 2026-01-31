@@ -7,6 +7,7 @@ import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,20 +47,11 @@ public class AgentAuthService {
 		Project project = projectRepository.findByProjectKeyWithConfigAndSources(request.getProjectKey())
 			.orElseThrow(() -> new GlobalException(ProjectErrorCode.NOT_FOUND));
 
-		// 중복 등록 확인
-		if (agentRepository.existsByProjectIdAndHostname(project.getId(), request.getHostname())) {
-			throw new GlobalException(AgentErrorCode.ALREADY_REGISTERED);
-		}
+		Agent agent = request.hasAgentUuid() && !request.getAgentUuid().isEmpty() ?
+			reRegister(request, project.getId(), ip) :
+			newAgent(request, project.getId(), ip);
 
-		Agent agent = agentRepository.save(Agent.create(
-			project.getId(),
-			request.getHostname(),
-			request.getOs(),
-			request.getOsVersion(),
-			ip
-		));
-
-		String accessToken = agentJwtTokenProvider.generateToken(agent.getId());
+		String accessToken = agentJwtTokenProvider.generateToken(agent.getId(), agent.getProjectId());
 		String refreshToken = generateRefreshToken();
 		String refreshTokenHash = sha256(refreshToken);
 
@@ -79,7 +71,7 @@ public class AgentAuthService {
 
 		return RegisterResponse.newBuilder()
 			.setSuccess(true)
-			.setAgentId(agent.getId().toString())
+			.setAgentUuid(agent.getAgentUuid().toString())
 			.setAccessToken(accessToken)
 			.setRefreshToken(refreshToken)
 			.setTimezone(agentConfig.getTimezone())
@@ -110,7 +102,7 @@ public class AgentAuthService {
 		Agent agent = agentRefreshToken.getAgent();
 		agent.updateLastSeen();
 
-		String accessToken = agentJwtTokenProvider.generateToken(agent.getId());
+		String accessToken = agentJwtTokenProvider.generateToken(agent.getId(), agent.getProjectId());
 		String newRefreshToken = generateRefreshToken();
 		String newRefreshTokenHash = sha256(newRefreshToken);
 
@@ -121,6 +113,33 @@ public class AgentAuthService {
 			.setAccessToken(accessToken)
 			.setRefreshToken(newRefreshToken)
 			.build();
+	}
+
+	// 재등록: agent_uuid로 기존 에이전트 조회
+	private Agent reRegister(RegisterRequest request, Long projectId, String ip) {
+		UUID agentUuid = UUID.fromString(request.getAgentUuid());
+		Agent agent = agentRepository.findByAgentUuid(agentUuid)
+			.orElseThrow(() -> new GlobalException(AgentErrorCode.NOT_FOUND));
+
+		// project_key 검증 (다른 프로젝트의 agent_uuid 도용 방지)
+		if (!agent.getProjectId().equals(projectId)) {
+			throw new GlobalException(AgentErrorCode.NOT_FOUND);
+		}
+
+		agent.updateInfo(request.getHostname(), request.getOs(), request.getOsVersion(), ip);
+		agentTokenRepository.revokeAllActiveByAgentId(agent.getId());
+
+		return agent;
+	}
+
+	private Agent newAgent(RegisterRequest request, Long projectId, String ip) {
+		return agentRepository.save(Agent.create(
+			projectId,
+			request.getHostname(),
+			request.getOs(),
+			request.getOsVersion(),
+			ip
+		));
 	}
 
 	private String generateRefreshToken() {
