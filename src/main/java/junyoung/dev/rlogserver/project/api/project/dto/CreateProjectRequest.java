@@ -13,10 +13,7 @@ public record CreateProjectRequest (
 
 	@NotBlank(message = "프로젝트 키는 필수입니다.")
 	@Size(max = 255, message = "프로젝트 키는 255자를 초과할 수 없습니다.")
-	String projectKey,
-
-	@Size(max = 255, message = "타임존은 255자를 초과할 수 없습니다.")
-	String timezone
+	String projectKey
 ) {
 
 }

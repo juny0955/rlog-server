@@ -12,10 +12,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import junyoung.dev.rlogserver.agent.exception.AgentErrorCode;
-import junyoung.dev.rlogserver.agent.repository.Agent;
-import junyoung.dev.rlogserver.agent.repository.AgentRefreshToken;
 import junyoung.dev.rlogserver.agent.repository.AgentRepository;
 import junyoung.dev.rlogserver.agent.repository.AgentTokenRepository;
+import junyoung.dev.rlogserver.agent.repository.entity.Agent;
+import junyoung.dev.rlogserver.agent.repository.entity.AgentRefreshToken;
 import junyoung.dev.rlogserver.global.exception.GlobalException;
 import junyoung.dev.rlogserver.global.grpc.AgentJwtTokenProvider;
 import junyoung.dev.rlogserver.project.exception.ProjectErrorCode;
@@ -42,8 +42,8 @@ public class AgentAuthService {
 	private final AgentJwtTokenProvider agentJwtTokenProvider;
 
 	@Transactional
-	public RegisterResponse register(RegisterRequest request) {
-		Project project = projectRepository.findByProjectKey(request.getProjectKey())
+	public RegisterResponse register(RegisterRequest request, String ip) {
+		Project project = projectRepository.findByProjectKeyWithConfigAndSources(request.getProjectKey())
 			.orElseThrow(() -> new GlobalException(ProjectErrorCode.NOT_FOUND));
 
 		// 중복 등록 확인
@@ -51,7 +51,13 @@ public class AgentAuthService {
 			throw new GlobalException(AgentErrorCode.ALREADY_REGISTERED);
 		}
 
-		Agent agent = agentRepository.save(Agent.create(project.getId(), request.getHostname(), request.getOs()));
+		Agent agent = agentRepository.save(Agent.create(
+			project.getId(),
+			request.getHostname(),
+			request.getOs(),
+			request.getOsVersion(),
+			ip
+		));
 
 		String accessToken = agentJwtTokenProvider.generateToken(agent.getId());
 		String refreshToken = generateRefreshToken();
@@ -73,6 +79,7 @@ public class AgentAuthService {
 
 		return RegisterResponse.newBuilder()
 			.setSuccess(true)
+			.setAgentId(agent.getId().toString())
 			.setAccessToken(accessToken)
 			.setRefreshToken(refreshToken)
 			.setTimezone(agentConfig.getTimezone())
@@ -80,12 +87,13 @@ public class AgentAuthService {
 			.setFlushIntervalSec(agentConfig.getFlushIntervalSec())
 			.addAllSources(sourcesList)
 			.build();
+
 	}
 
 	@Transactional
 	public RefreshResponse refresh(RefreshRequest request) {
 		String tokenHash = sha256(request.getRefreshToken());
-		AgentRefreshToken agentRefreshToken = agentTokenRepository.findByTokenHash(tokenHash)
+		AgentRefreshToken agentRefreshToken = agentTokenRepository.findByTokenHashWithAgent(tokenHash)
 			.orElseThrow(() -> new GlobalException(AgentErrorCode.REFRESH_TOKEN_NOT_FOUND));
 
 		// 만료 검증

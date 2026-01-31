@@ -60,8 +60,7 @@ public class Project {
 	public static Project create(
 		String name,
 		String description,
-		String projectKey,
-		String timezone
+		String projectKey
 	) {
 		Project project = Project.builder()
 			.name(name)
@@ -70,7 +69,7 @@ public class Project {
 			.status(ProjectStatus.ACTIVE)
 			.build();
 
-		project.setConfig(AgentConfig.defaultConfig(project, timezone));
+		project.setConfig(AgentConfig.defaultConfig(project));
 		return project;
 	}
 

@@ -1,4 +1,4 @@
-package junyoung.dev.rlogserver.agent.repository;
+package junyoung.dev.rlogserver.agent.repository.entity;
 
 import java.time.LocalDateTime;
 
@@ -39,6 +39,9 @@ public class Agent {
 	@Column(name = "os", length = 100)
 	private String os;
 
+	@Column(name = "os_version", length = 100)
+	private String osVersion;
+
 	@Column(name = "ip", length = 45)
 	private String ip;
 
@@ -56,14 +59,16 @@ public class Agent {
 	public static Agent create(
 		Long projectId,
 		String hostname,
-		String os
-		// String ip
+		String os,
+		String osVersion,
+		String ip
 	) {
 		return Agent.builder()
 			.projectId(projectId)
 			.hostname(hostname)
 			.os(os)
-			// .ip(ip)
+			.osVersion(osVersion)
+			.ip(ip)
 			.status(AgentStatus.REGISTERED)
 			.build();
 	}

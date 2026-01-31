@@ -6,6 +6,7 @@ public record AgentConfigResponse(
 	Long id,
 	Long batchSize,
 	Long flushIntervalSec,
+	String timezone,
 	List<AgentConfigSourceResponse> sources
 ) {
 

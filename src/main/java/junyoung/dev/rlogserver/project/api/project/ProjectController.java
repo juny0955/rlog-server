@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 import jakarta.validation.Valid;
 import junyoung.dev.rlogserver.project.api.project.dto.CreateProjectRequest;
 import junyoung.dev.rlogserver.project.api.project.dto.CreateProjectResponse;
-import junyoung.dev.rlogserver.project.api.project.dto.ProjectDetailResponse;
 import junyoung.dev.rlogserver.project.api.project.dto.ProjectKeyResponse;
 import junyoung.dev.rlogserver.project.api.project.dto.ProjectResponse;
 import junyoung.dev.rlogserver.project.service.ProjectService;
@@ -40,8 +39,8 @@ public class ProjectController {
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<ProjectDetailResponse> getProject(@PathVariable Long id) {
-		ProjectDetailResponse response = projectService.getProject(id);
+	public ResponseEntity<ProjectResponse> getProject(@PathVariable Long id) {
+		ProjectResponse response = projectService.getProject(id);
 		return ResponseEntity.ok(response);
 	}
 

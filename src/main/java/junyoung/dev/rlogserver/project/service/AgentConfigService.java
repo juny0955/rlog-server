@@ -3,6 +3,7 @@ package junyoung.dev.rlogserver.project.service;
 import static junyoung.dev.rlogserver.project.api.config.dto.AddAgentConfigSource.*;
 import static junyoung.dev.rlogserver.project.api.config.dto.AgentConfigResponse.*;
 
+import java.time.ZoneId;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -24,7 +25,7 @@ public class AgentConfigService {
 	private final AgentConfigRepository agentConfigRepository;
 
 	public AgentConfigResponse getAgentConfig(Long projectId) {
-		AgentConfig config = agentConfigRepository.findByProjectId(projectId)
+		AgentConfig config = agentConfigRepository.findByProjectIdWithSources(projectId)
 			.orElseThrow(() -> new GlobalException(ProjectErrorCode.NOT_FOUND));
 
 		List<AgentConfigSourceResponse> sources = config.getSources() != null
@@ -42,6 +43,7 @@ public class AgentConfigService {
 			config.getId(),
 			config.getBatchSize(),
 			config.getFlushIntervalSec(),
+			config.getTimezone(),
 			sources
 		);
 	}
@@ -51,7 +53,13 @@ public class AgentConfigService {
 		AgentConfig config = agentConfigRepository.findById(id)
 			.orElseThrow(() -> new GlobalException(ProjectErrorCode.NOT_FOUND));
 
-		config.updateConfig(request.batchSize(), request.flushIntervalSec());
+		try {
+			ZoneId.of(request.timezone());
+		} catch (Exception e) {
+			throw new GlobalException(ProjectErrorCode.INVALID_TIMEZONE);
+		}
+
+		config.updateConfig(request.batchSize(), request.flushIntervalSec(), request.timezone());
 	}
 
 	@Transactional

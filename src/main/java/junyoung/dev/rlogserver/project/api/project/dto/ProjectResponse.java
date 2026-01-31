@@ -7,6 +7,6 @@ public record ProjectResponse(
 	String name,
 	String description,
 	String status,
-	LocalDateTime updatedAt
+	LocalDateTime createdAt
 ) {
 }

@@ -1,5 +1,6 @@
-package junyoung.dev.rlogserver.agent.grpc;
+package junyoung.dev.rlogserver.global.grpc;
 
+import org.springframework.grpc.server.GlobalServerInterceptor;
 import org.springframework.stereotype.Component;
 
 import io.grpc.Context;
@@ -9,13 +10,13 @@ import io.grpc.ServerCall;
 import io.grpc.ServerCallHandler;
 import io.grpc.ServerInterceptor;
 import io.grpc.Status;
-import junyoung.dev.rlogserver.global.grpc.AgentJwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @Component
+@GlobalServerInterceptor
 @RequiredArgsConstructor
+@Slf4j
 public class AgentJwtInterceptor implements ServerInterceptor {
 
 	private static final Metadata.Key<String> AUTHORIZATION_KEY = Metadata.Key.of("Authorization", Metadata.ASCII_STRING_MARSHALLER);

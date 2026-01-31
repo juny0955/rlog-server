@@ -59,18 +59,19 @@ public class AgentConfig {
 	@OneToMany(mappedBy = "agentConfig", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<AgentConfigSource> sources;
 
-	public static AgentConfig defaultConfig(Project project, String timezone) {
+	public static AgentConfig defaultConfig(Project project) {
 		return AgentConfig.builder()
 			.project(project)
-			.timezone(timezone)
+			.timezone("UTC")
 			.batchSize(1000L)
 			.flushIntervalSec(15L)
 			.build();
 	}
 
-	public void updateConfig(Long batchSize, Long flushIntervalSec) {
+	public void updateConfig(Long batchSize, Long flushIntervalSec, String timezone) {
 		this.batchSize = batchSize;
 		this.flushIntervalSec = flushIntervalSec;
+		this.timezone = timezone;
 	}
 
 	public void addSource(String label, String path) {
