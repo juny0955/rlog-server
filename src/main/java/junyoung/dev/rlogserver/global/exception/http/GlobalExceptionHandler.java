@@ -1,4 +1,4 @@
-package junyoung.dev.rlogserver.global.exception;
+package junyoung.dev.rlogserver.global.exception.http;
 
 import java.util.List;
 

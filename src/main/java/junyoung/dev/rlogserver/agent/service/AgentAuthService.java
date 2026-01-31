@@ -12,14 +12,13 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import junyoung.dev.rlogserver.agent.exception.AgentErrorCode;
+import junyoung.dev.rlogserver.agent.exception.AgentGrpcErrorCode;
 import junyoung.dev.rlogserver.agent.repository.AgentRepository;
 import junyoung.dev.rlogserver.agent.repository.AgentTokenRepository;
 import junyoung.dev.rlogserver.agent.repository.entity.Agent;
 import junyoung.dev.rlogserver.agent.repository.entity.AgentRefreshToken;
-import junyoung.dev.rlogserver.global.exception.GlobalException;
+import junyoung.dev.rlogserver.global.exception.grpc.GrpcException;
 import junyoung.dev.rlogserver.global.grpc.AgentJwtTokenProvider;
-import junyoung.dev.rlogserver.project.exception.ProjectErrorCode;
 import junyoung.dev.rlogserver.project.repository.ProjectRepository;
 import junyoung.dev.rlogserver.project.repository.entity.AgentConfig;
 import junyoung.dev.rlogserver.project.repository.entity.AgentConfigSource;
@@ -45,7 +44,7 @@ public class AgentAuthService {
 	@Transactional
 	public RegisterResponse register(RegisterRequest request, String ip) {
 		Project project = projectRepository.findByProjectKeyWithConfigAndSources(request.getProjectKey())
-			.orElseThrow(() -> new GlobalException(ProjectErrorCode.NOT_FOUND));
+			.orElseThrow(() -> new GrpcException(AgentGrpcErrorCode.PROJECT_NOT_FOUND));
 
 		Agent agent = request.hasAgentUuid() && !request.getAgentUuid().isEmpty() ?
 			reRegister(request, project.getId(), ip) :
@@ -86,17 +85,17 @@ public class AgentAuthService {
 	public RefreshResponse refresh(RefreshRequest request) {
 		String tokenHash = sha256(request.getRefreshToken());
 		AgentRefreshToken agentRefreshToken = agentTokenRepository.findByTokenHashWithAgent(tokenHash)
-			.orElseThrow(() -> new GlobalException(AgentErrorCode.REFRESH_TOKEN_NOT_FOUND));
+			.orElseThrow(() -> new GrpcException(AgentGrpcErrorCode.REFRESH_TOKEN_NOT_FOUND));
 
 		// 만료 검증
 		if (agentRefreshToken.isExpired()) {
 			agentRefreshToken.expire();
-			throw new GlobalException(AgentErrorCode.REFRESH_TOKEN_EXPIRED);
+			throw new GrpcException(AgentGrpcErrorCode.REFRESH_TOKEN_EXPIRED);
 		}
 
 		// 활성 상태 검증
 		if (!agentRefreshToken.isActive()) {
-			throw new GlobalException(AgentErrorCode.REFRESH_TOKEN_NOT_FOUND);
+			throw new GrpcException(AgentGrpcErrorCode.REFRESH_TOKEN_NOT_FOUND);
 		}
 
 		Agent agent = agentRefreshToken.getAgent();
@@ -119,11 +118,11 @@ public class AgentAuthService {
 	private Agent reRegister(RegisterRequest request, Long projectId, String ip) {
 		UUID agentUuid = UUID.fromString(request.getAgentUuid());
 		Agent agent = agentRepository.findByAgentUuid(agentUuid)
-			.orElseThrow(() -> new GlobalException(AgentErrorCode.NOT_FOUND));
+			.orElseThrow(() -> new GrpcException(AgentGrpcErrorCode.NOT_FOUND));
 
 		// project_key 검증 (다른 프로젝트의 agent_uuid 도용 방지)
 		if (!agent.getProjectId().equals(projectId)) {
-			throw new GlobalException(AgentErrorCode.NOT_FOUND);
+			throw new GrpcException(AgentGrpcErrorCode.NOT_FOUND);
 		}
 
 		agent.updateInfo(request.getHostname(), request.getOs(), request.getOsVersion(), ip);

@@ -7,7 +7,7 @@ import junyoung.dev.rlogserver.agent.repository.AccessHistoryRepository;
 import junyoung.dev.rlogserver.agent.repository.entity.AgentAccessHistory;
 import junyoung.dev.rlogserver.agent.repository.entity.AgentAccessStatus;
 import junyoung.dev.rlogserver.agent.service.AgentAuthService;
-import junyoung.dev.rlogserver.global.exception.GlobalException;
+import junyoung.dev.rlogserver.global.exception.http.GlobalException;
 import junyoung.dev.rlogserver.global.grpc.AgentIpInterceptor;
 import junyoung.dev.rlogserver.proto.auth.AuthServiceGrpc;
 import junyoung.dev.rlogserver.proto.auth.RefreshRequest;

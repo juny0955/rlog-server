@@ -4,7 +4,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import junyoung.dev.rlogserver.global.exception.GlobalException;
+import junyoung.dev.rlogserver.global.exception.http.GlobalException;
 import junyoung.dev.rlogserver.user.api.user.dto.ChangePasswordRequest;
 import junyoung.dev.rlogserver.user.exception.UserErrorCode;
 import junyoung.dev.rlogserver.user.repository.User;

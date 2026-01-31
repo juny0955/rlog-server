@@ -9,7 +9,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import junyoung.dev.rlogserver.global.exception.GlobalException;
+import junyoung.dev.rlogserver.global.exception.http.GlobalException;
 import junyoung.dev.rlogserver.project.api.config.dto.UpdateAgentConfigRequest;
 import junyoung.dev.rlogserver.project.api.config.dto.AgentConfigResponse;
 import junyoung.dev.rlogserver.project.exception.ProjectErrorCode;

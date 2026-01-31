@@ -2,7 +2,7 @@ package junyoung.dev.rlogserver.user.exception;
 
 import org.springframework.http.HttpStatus;
 
-import junyoung.dev.rlogserver.global.exception.ErrorCode;
+import junyoung.dev.rlogserver.global.exception.http.ErrorCode;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
