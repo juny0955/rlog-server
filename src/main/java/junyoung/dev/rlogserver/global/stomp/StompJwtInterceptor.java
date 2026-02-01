@@ -33,8 +33,7 @@ public class StompJwtInterceptor implements ChannelInterceptor {
 			String token = extractToken(accessor);
 			CustomUserDetails userDetails = validateAndGetUser(token);
 
-			UsernamePasswordAuthenticationToken authentication =
-				new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+			UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 			accessor.setUser(authentication);
 		}
 

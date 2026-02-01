@@ -37,6 +37,12 @@ public class Agent {
 	@Column(name = "agent_uuid", nullable = false, unique = true)
 	private UUID agentUuid;
 
+	@Column(name = "name", nullable = false, length = 150)
+	private String name;
+
+	@Column(name = "sequence", nullable = false)
+	private Integer sequence;
+
 	@Column(name = "hostname")
 	private String hostname;
 
@@ -62,6 +68,8 @@ public class Agent {
 
 	public static Agent create(
 		Long projectId,
+		String name,
+		Integer sequence,
 		String hostname,
 		String os,
 		String osVersion,
@@ -70,6 +78,8 @@ public class Agent {
 		return Agent.builder()
 			.projectId(projectId)
 			.agentUuid(UUID.randomUUID())
+			.name(name)
+			.sequence(sequence)
 			.hostname(hostname)
 			.os(os)
 			.osVersion(osVersion)

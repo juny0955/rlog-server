@@ -48,7 +48,7 @@ public class AgentAuthService {
 
 		Agent agent = request.hasAgentUuid() && !request.getAgentUuid().isEmpty() ?
 			reRegister(request, project.getId(), ip) :
-			newAgent(request, project.getId(), ip);
+			newAgent(request, project, ip);
 
 		String accessToken = agentJwtTokenProvider.generateToken(agent.getId(), agent.getProjectId());
 		String refreshToken = generateRefreshToken();
@@ -131,9 +131,17 @@ public class AgentAuthService {
 		return agent;
 	}
 
-	private Agent newAgent(RegisterRequest request, Long projectId, String ip) {
+	private Agent newAgent(RegisterRequest request, Project project, String ip) {
+		Integer nextSequence = agentRepository.findMaxSequenceByProjectId(project.getId())
+			.map(max -> max + 1)
+			.orElse(1);
+
+		String agentName = project.getName() + "-" + nextSequence;
+
 		return agentRepository.save(Agent.create(
-			projectId,
+			project.getId(),
+			agentName,
+			nextSequence,
 			request.getHostname(),
 			request.getOs(),
 			request.getOsVersion(),

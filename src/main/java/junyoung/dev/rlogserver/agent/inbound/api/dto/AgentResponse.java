@@ -7,6 +7,7 @@ import junyoung.dev.rlogserver.agent.repository.entity.AgentStatus;
 
 public record AgentResponse(
 	Long id,
+	String name,
 	AgentStatus status,
 	String hostname,
 	String ip,
@@ -18,6 +19,7 @@ public record AgentResponse(
 	public static AgentResponse from(Agent agent) {
 		return new AgentResponse(
 			agent.getId(),
+			agent.getName(),
 			agent.getStatus(),
 			agent.getHostname(),
 			agent.getIp(),
