@@ -5,12 +5,15 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import junyoung.dev.rlogserver.agent.exception.AgentErrorCode;
 import junyoung.dev.rlogserver.agent.inbound.api.dto.AccessHistoryResponse;
 import junyoung.dev.rlogserver.agent.inbound.api.dto.AgentResponse;
 import junyoung.dev.rlogserver.agent.inbound.api.dto.AgentSummaryResponse;
 import junyoung.dev.rlogserver.agent.repository.AccessHistoryRepository;
 import junyoung.dev.rlogserver.agent.repository.AgentRepository;
+import junyoung.dev.rlogserver.agent.repository.entity.Agent;
 import junyoung.dev.rlogserver.agent.repository.entity.AgentStatus;
+import junyoung.dev.rlogserver.global.exception.http.GlobalException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -25,6 +28,13 @@ public class AgentService {
 		return agentRepository.findByProjectId(projectId).stream()
 			.map(AgentResponse::from)
 			.toList();
+	}
+
+	public AgentResponse getAgent(Long id) {
+		Agent agent = agentRepository.findById(id)
+			.orElseThrow(() -> new GlobalException(AgentErrorCode.NOT_FOUND));
+
+		return AgentResponse.from(agent);
 	}
 
 	public AgentSummaryResponse getAgentSummary(Long projectId) {
