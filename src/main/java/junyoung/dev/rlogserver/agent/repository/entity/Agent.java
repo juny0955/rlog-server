@@ -107,4 +107,8 @@ public class Agent {
 		this.osVersion = osVersion;
 		this.ip = ip;
 	}
+
+	public void updateName(String name) {
+		this.name = name;
+	}
 }

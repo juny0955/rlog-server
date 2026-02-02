@@ -8,7 +8,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public enum AgentErrorCode implements ErrorCode {
 	NOT_FOUND("AGENT-NOT-FOUND", HttpStatus.NOT_FOUND, "에이전트를 찾을 수 없습니다."),
-	;
+	DUPLICATED_NAME("AGENT-DUP-NAME", HttpStatus.BAD_REQUEST, "이미 존재하는 에이전트 이름입니다.");
 
 	private final String code;
 	private final HttpStatus status;

@@ -78,7 +78,6 @@ public class AgentAuthService {
 			.setFlushIntervalSec(agentConfig.getFlushIntervalSec())
 			.addAllSources(sourcesList)
 			.build();
-
 	}
 
 	@Transactional

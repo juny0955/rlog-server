@@ -3,15 +3,20 @@ package junyoung.dev.rlogserver.agent.inbound.api;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import junyoung.dev.rlogserver.agent.inbound.api.dto.AccessHistoryResponse;
+import junyoung.dev.rlogserver.agent.inbound.api.dto.AgentDetailResponse;
 import junyoung.dev.rlogserver.agent.inbound.api.dto.AgentResponse;
 import junyoung.dev.rlogserver.agent.inbound.api.dto.AgentSummaryResponse;
+import junyoung.dev.rlogserver.agent.inbound.api.dto.UpdateAgentNameRequest;
 import junyoung.dev.rlogserver.agent.service.AgentService;
 import lombok.RequiredArgsConstructor;
 
@@ -29,8 +34,8 @@ public class AgentController {
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<AgentResponse> getAgent(@PathVariable Long id) {
-		AgentResponse response = agentService.getAgent(id);
+	public ResponseEntity<AgentDetailResponse> getAgent(@PathVariable Long id) {
+		AgentDetailResponse response = agentService.getAgent(id);
 		return ResponseEntity.ok(response);
 	}
 
@@ -44,6 +49,12 @@ public class AgentController {
 	public ResponseEntity<List<AccessHistoryResponse>> getAccessHistories() {
 		List<AccessHistoryResponse> responses = agentService.getAccessHistories();
 		return ResponseEntity.ok(responses);
+	}
+
+	@PatchMapping("/{id}/name")
+	public ResponseEntity<Void> updateAgentName(@PathVariable Long id, @Valid @RequestBody UpdateAgentNameRequest request) {
+		agentService.updateAgentName(id, request.name());
+		return ResponseEntity.noContent().build();
 	}
 
 }

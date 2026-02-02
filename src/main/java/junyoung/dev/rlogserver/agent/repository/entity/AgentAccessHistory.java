@@ -54,10 +54,10 @@ public class AgentAccessHistory {
 		String reason
 	) {
 		return AgentAccessHistory.builder()
-				.ip(ip)
-				.hostname(hostname)
-				.status(status)
-				.reason(reason)
-				.build();
+			.ip(ip)
+			.hostname(hostname)
+			.status(status)
+			.reason(reason)
+			.build();
 	}
 }

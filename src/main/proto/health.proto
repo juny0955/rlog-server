@@ -1,0 +1,19 @@
+syntax = "proto3";
+package health;
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+option java_package = "junyoung.dev.rlogserver.proto.health";
+option java_outer_classname = "HealthProto";
+option java_multiple_files = true;
+
+service HealthService {
+  rpc Heartbeat(HeartbeatRequest) returns (google.protobuf.Empty);
+}
+
+message HeartbeatRequest {
+  google.protobuf.Timestamp timestamp = 1;
+  double cpu = 2;
+  double memory = 3;
+}

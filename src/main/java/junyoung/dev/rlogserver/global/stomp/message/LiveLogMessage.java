@@ -1,4 +1,4 @@
-package junyoung.dev.rlogserver.agent.inbound.api.dto;
+package junyoung.dev.rlogserver.global.stomp.message;
 
 import java.time.Instant;
 import java.util.List;

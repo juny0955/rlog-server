@@ -22,4 +22,6 @@ public interface AgentRepository extends JpaRepository<Agent, Long> {
 
 	@Query("SELECT MAX(a.sequence) FROM Agent a WHERE a.projectId = :projectId")
 	Optional<Integer> findMaxSequenceByProjectId(@Param("projectId") Long projectId);
+
+	boolean existsByName(String name);
 }
