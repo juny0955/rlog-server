@@ -26,7 +26,7 @@ public class AgentLogGrpcService extends LogServiceGrpc.LogServiceImplBase {
 		return new StreamObserver<>() {
 			@Override
 			public void onNext(LogBatch batch) {
-				log.info("로그 수신 완료");
+				log.debug("{} 로그 수신", agentId);
 				stompMessageService.sendLiveLog(agentId, batch);
 			}
 

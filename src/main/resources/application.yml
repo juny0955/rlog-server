@@ -33,3 +33,7 @@ jwt:
   agent:
     secret: rlog-agent-jwt-secret-key-must-be-at-least-32-characters-long
     expiration: 86400000
+
+heartbeat:
+  batch-interval-ms: 60000
+  offline-timeout-ms: 120000

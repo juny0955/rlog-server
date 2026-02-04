@@ -5,11 +5,11 @@ import org.springframework.grpc.server.service.GrpcService;
 import com.google.protobuf.Empty;
 
 import io.grpc.stub.StreamObserver;
-import junyoung.dev.rlogserver.agent.service.AgentService;
+import junyoung.dev.rlogserver.agent.service.heartbeat.HeartBeatCache;
 import junyoung.dev.rlogserver.global.grpc.AgentJwtInterceptor;
 import junyoung.dev.rlogserver.global.stomp.StompMessageService;
-import junyoung.dev.rlogserver.proto.health.HeartbeatRequest;
 import junyoung.dev.rlogserver.proto.health.HealthServiceGrpc;
+import junyoung.dev.rlogserver.proto.health.HeartbeatRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -18,7 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class AgentHealthGrpcService extends HealthServiceGrpc.HealthServiceImplBase {
 
-	private final AgentService agentService;
+	private final HeartBeatCache heartBeatCache;
 	private final StompMessageService stompMessageService;
 
 	@Override
@@ -26,7 +26,7 @@ public class AgentHealthGrpcService extends HealthServiceGrpc.HealthServiceImplB
 		Long agentId = AgentJwtInterceptor.AGENT_ID_KEY.get();
 
 		stompMessageService.sendHeartbeat(agentId, request);
-		agentService.processHeartbeat(agentId);
+		heartBeatCache.put(agentId);
 
 		responseObserver.onNext(Empty.getDefaultInstance());
 		responseObserver.onCompleted();
