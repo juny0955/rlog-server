@@ -88,19 +88,6 @@ public class Agent {
 			.build();
 	}
 
-	public void markOnline() {
-		this.status = AgentStatus.ONLINE;
-		this.lastSeenAt = LocalDateTime.now();
-	}
-
-	public void markOffline() {
-		this.status = AgentStatus.OFFLINE;
-	}
-
-	public void updateLastSeen() {
-		this.lastSeenAt = LocalDateTime.now();
-	}
-
 	public void updateInfo(String hostname, String os, String osVersion, String ip) {
 		this.hostname = hostname;
 		this.os = os;

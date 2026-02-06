@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import junyoung.dev.rlogserver.agent.exception.AgentErrorCode;
-import junyoung.dev.rlogserver.agent.exception.AgentGrpcErrorCode;
 import junyoung.dev.rlogserver.agent.inbound.api.dto.AccessHistoryResponse;
 import junyoung.dev.rlogserver.agent.inbound.api.dto.AgentDetailResponse;
 import junyoung.dev.rlogserver.agent.inbound.api.dto.AgentResponse;
@@ -15,7 +14,6 @@ import junyoung.dev.rlogserver.agent.repository.AccessHistoryRepository;
 import junyoung.dev.rlogserver.agent.repository.AgentRepository;
 import junyoung.dev.rlogserver.agent.repository.entity.Agent;
 import junyoung.dev.rlogserver.agent.repository.entity.AgentStatus;
-import junyoung.dev.rlogserver.global.exception.grpc.GrpcException;
 import junyoung.dev.rlogserver.global.exception.http.GlobalException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -63,17 +61,5 @@ public class AgentService {
 			throw new GlobalException(AgentErrorCode.DUPLICATED_NAME);
 
 		agent.updateName(name);
-	}
-
-	@Transactional
-	public void processHeartbeat(Long agentId) {
-		Agent agent = agentRepository.findById(agentId)
-			.orElseThrow(() -> new GrpcException(AgentGrpcErrorCode.NOT_FOUND));
-
-		if (agent.getStatus() != AgentStatus.ONLINE) {
-			agent.markOnline();
-		} else {
-			agent.updateLastSeen();
-		}
 	}
 }

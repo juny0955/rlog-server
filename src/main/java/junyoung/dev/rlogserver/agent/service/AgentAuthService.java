@@ -98,7 +98,6 @@ public class AgentAuthService {
 		}
 
 		Agent agent = agentRefreshToken.getAgent();
-		agent.updateLastSeen();
 
 		String accessToken = agentJwtTokenProvider.generateToken(agent.getId(), agent.getProjectId());
 		String newRefreshToken = generateRefreshToken();

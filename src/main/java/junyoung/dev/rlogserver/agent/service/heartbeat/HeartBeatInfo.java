@@ -9,8 +9,8 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class HeartBeatInfo {
-	Long agentId;
-	LocalDateTime lastHeartBeatTime;
+	private Long agentId;
+	private LocalDateTime lastHeartBeatTime;
 
 	@Override
 	public boolean equals(Object o) {
