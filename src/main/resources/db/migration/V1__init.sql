@@ -4,9 +4,9 @@ CREATE TABLE users (
     password            VARCHAR(255) NOT NULL,
     role                VARCHAR(20) NOT NULL,
     is_default_password BOOLEAN NOT NULL DEFAULT TRUE,
-    last_login_at       TIMESTAMPTZ,
-    created_at          TIMESTAMPTZ NOT NULL DEFAULT now(),
-    updated_at          TIMESTAMPTZ NOT NULL DEFAULT now()
+    last_login_at       TIMESTAMP,
+    created_at          TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at          TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE projects (
@@ -15,8 +15,8 @@ CREATE TABLE projects (
     description         VARCHAR(255) NULL,
     project_key         VARCHAR(255) NOT NULL UNIQUE,
     status              VARCHAR(20) NOT NULL DEFAULT 'ACTIVE',
-    created_at          TIMESTAMPTZ NOT NULL DEFAULT now(),
-    updated_at          TIMESTAMPTZ NOT NULL DEFAULT now()
+    created_at          TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at          TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE agent_config (
@@ -25,8 +25,8 @@ CREATE TABLE agent_config (
     timezone            VARCHAR(255) NOT NULL,
     batch_size          BIGINT NOT NULL,
     flush_interval_sec  BIGINT NOT NULL,
-    created_at          TIMESTAMPTZ NOT NULL DEFAULT now(),
-    updated_at          TIMESTAMPTZ NOT NULL DEFAULT now(),
+    created_at          TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at          TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT uq_project_agent_config_project UNIQUE (project_id),
     CONSTRAINT fk_project_agent_config_project FOREIGN KEY (project_id) REFERENCES projects(id)
@@ -38,8 +38,8 @@ CREATE TABLE agent_config_sources (
     label               VARCHAR(100) NOT NULL,
     path                VARCHAR(500) NOT NULL,
     enabled             BOOLEAN NOT NULL DEFAULT TRUE,
-    created_at          TIMESTAMPTZ NOT NULL DEFAULT now(),
-    updated_at          TIMESTAMPTZ NOT NULL DEFAULT now(),
+    created_at          TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at          TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT fk_pacs_config FOREIGN KEY (agent_config_id) REFERENCES agent_config(id) ON DELETE CASCADE,
     CONSTRAINT uq_pacs_config_label UNIQUE (agent_config_id, label)
@@ -56,8 +56,8 @@ CREATE TABLE agents (
     os_version          VARCHAR(100),
     ip                  VARCHAR(45),
     status              VARCHAR(20) NOT NULL,
-    last_seen_at        TIMESTAMPTZ,
-    created_at          TIMESTAMPTZ NOT NULL DEFAULT now(),
+    last_seen_at        TIMESTAMP,
+    created_at          TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT fk_agents_project FOREIGN KEY (project_id) REFERENCES projects(id)
 );

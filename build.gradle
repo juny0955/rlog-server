@@ -3,6 +3,7 @@ plugins {
     id 'org.springframework.boot' version '4.0.2'
     id 'io.spring.dependency-management' version '1.1.7'
     id 'com.google.protobuf' version '0.9.5'
+    id 'nu.studer.jooq' version '9.0'
 }
 
 group = 'junyoung.dev'
@@ -38,6 +39,9 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-flyway'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-websocket'
+    implementation 'org.springframework.boot:spring-boot-starter-jooq'
+
+    jooqGenerator 'org.postgresql:postgresql'
 
     implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.6'
@@ -76,13 +80,56 @@ protobuf {
         }
     }
     generateProtoTasks {
-        all()*.plugins {
-            grpc {
-                option '@generated=omit'
+        all().configureEach {
+            plugins {
+                grpc {}
             }
         }
     }
 }
+
+jooq {
+    version = '3.19.29'
+    configurations {
+        main {
+            generationTool {
+                jdbc {
+                    driver = 'org.postgresql.Driver'
+                    url = 'jdbc:postgresql://localhost:5432/rlog?currentSchema=rlog'
+                    user = 'rlog_admin'
+                    password = 'rlog_admin'
+                }
+                generator {
+                    name = 'org.jooq.codegen.DefaultGenerator'
+                    database {
+                        name = 'org.jooq.meta.postgres.PostgresDatabase'
+                        inputSchema = 'rlog'
+                        includes = '.*'
+                        excludes = 'flyway_schema_history'
+                    }
+                    target {
+                        packageName = 'junyoung.dev.rlogserver.jooq'
+                        directory = 'build/generated-src/jooq/main'
+                    }
+                }
+            }
+        }
+    }
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir 'build/generated-src/jooq/main'
+            srcDir 'build/generated/sources/proto/main/java'
+            srcDir 'build/generated/sources/proto/main/grpc'
+        }
+    }
+}
+
+//tasks.named('generateMainJooq') {
+//    dependsOn tasks.named('flywayMigrate')
+//}
 
 tasks.named('test') {
     useJUnitPlatform()
