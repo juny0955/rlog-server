@@ -29,7 +29,8 @@ public class AgentQueryRepository {
 		long totalElements = dsl.selectCount()
 			.from(AGENTS)
 			.where(AGENTS.PROJECT_ID.eq(projectId))
-			.fetchOne(0, long.class);
+			.fetchOptional(0, long.class)
+			.orElse(0L);
 
 		List<AgentResponse> content = dsl.select(
 				AGENTS.ID, AGENTS.NAME, AGENTS.STATUS,
@@ -71,7 +72,8 @@ public class AgentQueryRepository {
 				DSL.count().filterWhere(AGENTS.STATUS.eq(AgentStatus.ONLINE.name())))
 			.from(AGENTS)
 			.where(AGENTS.PROJECT_ID.eq(projectId))
-			.fetchOne();
+			.fetchSingle();
+
 		return new AgentSummaryResponse(result.value1(), result.value2());
 	}
 
