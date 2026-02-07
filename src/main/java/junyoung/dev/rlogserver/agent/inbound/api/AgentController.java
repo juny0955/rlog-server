@@ -17,7 +17,8 @@ import junyoung.dev.rlogserver.agent.inbound.api.dto.AgentDetailResponse;
 import junyoung.dev.rlogserver.agent.inbound.api.dto.AgentResponse;
 import junyoung.dev.rlogserver.agent.inbound.api.dto.AgentSummaryResponse;
 import junyoung.dev.rlogserver.agent.inbound.api.dto.UpdateAgentNameRequest;
-import junyoung.dev.rlogserver.agent.service.AgentService;
+import junyoung.dev.rlogserver.agent.service.command.AgentCommandService;
+import junyoung.dev.rlogserver.agent.service.query.AgentQueryService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -25,35 +26,36 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/v1/agents")
 public class AgentController {
 
-	private final AgentService agentService;
+	private final AgentQueryService agentQueryService;
+	private final AgentCommandService agentCommandService;
 
 	@GetMapping
 	public ResponseEntity<List<AgentResponse>> getAgents(@RequestParam Long projectId) {
-		List<AgentResponse> responses = agentService.getAgents(projectId);
+		List<AgentResponse> responses = agentQueryService.getAgents(projectId);
 		return ResponseEntity.ok(responses);
 	}
 
 	@GetMapping("/{id}")
 	public ResponseEntity<AgentDetailResponse> getAgent(@PathVariable Long id) {
-		AgentDetailResponse response = agentService.getAgent(id);
+		AgentDetailResponse response = agentQueryService.getAgent(id);
 		return ResponseEntity.ok(response);
 	}
 
 	@GetMapping("/summary")
 	public ResponseEntity<AgentSummaryResponse> getAgentSummary(@RequestParam Long projectId) {
-		AgentSummaryResponse response = agentService.getAgentSummary(projectId);
+		AgentSummaryResponse response = agentQueryService.getAgentSummary(projectId);
 		return ResponseEntity.ok(response);
 	}
 
 	@GetMapping("/access-histories")
 	public ResponseEntity<List<AccessHistoryResponse>> getAccessHistories() {
-		List<AccessHistoryResponse> responses = agentService.getAccessHistories();
+		List<AccessHistoryResponse> responses = agentQueryService.getAccessHistories();
 		return ResponseEntity.ok(responses);
 	}
 
 	@PatchMapping("/{id}/name")
 	public ResponseEntity<Void> updateAgentName(@PathVariable Long id, @Valid @RequestBody UpdateAgentNameRequest request) {
-		agentService.updateAgentName(id, request.name());
+		agentCommandService.updateAgentName(id, request.name());
 		return ResponseEntity.noContent().build();
 	}
 

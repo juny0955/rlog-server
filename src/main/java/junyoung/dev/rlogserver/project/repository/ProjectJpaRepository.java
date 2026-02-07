@@ -8,12 +8,12 @@ import org.springframework.data.repository.query.Param;
 
 import junyoung.dev.rlogserver.project.repository.entity.Project;
 
-public interface ProjectRepository extends JpaRepository<Project, Long> {
+public interface ProjectJpaRepository extends JpaRepository<Project, Long> {
 	boolean existsByName(String name);
 
 	@Query("SELECT p FROM Project p " +
-		"LEFT JOIN FETCH p.agentConfig ac " +
-		"LEFT JOIN FETCH ac.sources " +
+		"JOIN FETCH p.agentConfig ac " +
+		"JOIN FETCH ac.sources " +
 		"WHERE p.projectKey = :projectKey")
 	Optional<Project> findByProjectKeyWithConfigAndSources(@Param("projectKey") String projectKey);
 }

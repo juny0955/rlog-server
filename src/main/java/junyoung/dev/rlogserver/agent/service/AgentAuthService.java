@@ -13,13 +13,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import junyoung.dev.rlogserver.agent.exception.AgentGrpcErrorCode;
-import junyoung.dev.rlogserver.agent.repository.AgentRepository;
+import junyoung.dev.rlogserver.agent.repository.AgentJpaRepository;
 import junyoung.dev.rlogserver.agent.repository.AgentTokenRepository;
 import junyoung.dev.rlogserver.agent.repository.entity.Agent;
 import junyoung.dev.rlogserver.agent.repository.entity.AgentRefreshToken;
 import junyoung.dev.rlogserver.global.exception.grpc.GrpcException;
 import junyoung.dev.rlogserver.global.grpc.AgentJwtTokenProvider;
-import junyoung.dev.rlogserver.project.repository.ProjectRepository;
+import junyoung.dev.rlogserver.project.repository.ProjectJpaRepository;
 import junyoung.dev.rlogserver.project.repository.entity.AgentConfig;
 import junyoung.dev.rlogserver.project.repository.entity.AgentConfigSource;
 import junyoung.dev.rlogserver.project.repository.entity.Project;
@@ -36,9 +36,9 @@ public class AgentAuthService {
 
 	private static final SecureRandom SECURE_RANDOM = new SecureRandom();
 
-	private final AgentRepository agentRepository;
+	private final AgentJpaRepository agentRepository;
 	private final AgentTokenRepository agentTokenRepository;
-	private final ProjectRepository projectRepository;
+	private final ProjectJpaRepository projectRepository;
 	private final AgentJwtTokenProvider agentJwtTokenProvider;
 
 	@Transactional

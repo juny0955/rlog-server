@@ -16,7 +16,8 @@ import junyoung.dev.rlogserver.project.api.project.dto.CreateProjectRequest;
 import junyoung.dev.rlogserver.project.api.project.dto.CreateProjectResponse;
 import junyoung.dev.rlogserver.project.api.project.dto.ProjectKeyResponse;
 import junyoung.dev.rlogserver.project.api.project.dto.ProjectResponse;
-import junyoung.dev.rlogserver.project.service.ProjectService;
+import junyoung.dev.rlogserver.project.service.command.ProjectCommandService;
+import junyoung.dev.rlogserver.project.service.query.ProjectQueryService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -24,29 +25,30 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/api/v1/projects")
 public class ProjectController {
 
-	private final ProjectService projectService;
+	private final ProjectQueryService projectQueryService;
+	private final ProjectCommandService projectCommandService;
 
 	@PostMapping
 	public ResponseEntity<CreateProjectResponse> createProject(@Valid @RequestBody CreateProjectRequest request) {
-		CreateProjectResponse response = projectService.createProject(request);
+		CreateProjectResponse response = projectCommandService.createProject(request);
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
 
 	@GetMapping
 	public ResponseEntity<List<ProjectResponse>> getProjects() {
-		List<ProjectResponse> responses = projectService.getProjects();
+		List<ProjectResponse> responses = projectQueryService.getProjects();
 		return ResponseEntity.ok(responses);
 	}
 
 	@GetMapping("/{id}")
 	public ResponseEntity<ProjectResponse> getProject(@PathVariable Long id) {
-		ProjectResponse response = projectService.getProject(id);
+		ProjectResponse response = projectQueryService.getProject(id);
 		return ResponseEntity.ok(response);
 	}
 
 	@GetMapping("/{id}/project-key")
 	public ResponseEntity<ProjectKeyResponse> getProjectKey(@PathVariable Long id) {
-		ProjectKeyResponse response = projectService.getProjectKey(id);
+		ProjectKeyResponse response = projectQueryService.getProjectKey(id);
 		return ResponseEntity.ok(response);
 	}
 }
