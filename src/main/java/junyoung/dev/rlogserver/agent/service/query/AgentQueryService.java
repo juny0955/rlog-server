@@ -12,6 +12,8 @@ import junyoung.dev.rlogserver.agent.inbound.api.dto.AgentResponse;
 import junyoung.dev.rlogserver.agent.inbound.api.dto.AgentSummaryResponse;
 import junyoung.dev.rlogserver.agent.repository.AgentQueryRepository;
 import junyoung.dev.rlogserver.global.exception.http.GlobalException;
+import junyoung.dev.rlogserver.global.pagination.PageRequestParam;
+import junyoung.dev.rlogserver.global.pagination.PageResponse;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -21,8 +23,8 @@ public class AgentQueryService {
 
 	private final AgentQueryRepository agentQueryRepository;
 
-	public List<AgentResponse> getAgents(Long projectId) {
-		return agentQueryRepository.findAgentsByProjectId(projectId);
+	public PageResponse<AgentResponse> getAgents(Long projectId, PageRequestParam pageRequest) {
+		return agentQueryRepository.findAgentsByProjectId(projectId, pageRequest);
 	}
 
 	public AgentDetailResponse getAgent(Long id) {

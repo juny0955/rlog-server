@@ -1,11 +1,11 @@
 package junyoung.dev.rlogserver.project.service.query;
 
-import java.util.List;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import junyoung.dev.rlogserver.global.exception.http.GlobalException;
+import junyoung.dev.rlogserver.global.pagination.PageRequestParam;
+import junyoung.dev.rlogserver.global.pagination.PageResponse;
 import junyoung.dev.rlogserver.project.api.project.dto.ProjectKeyResponse;
 import junyoung.dev.rlogserver.project.api.project.dto.ProjectResponse;
 import junyoung.dev.rlogserver.project.exception.ProjectErrorCode;
@@ -19,8 +19,8 @@ public class ProjectQueryService {
 
 	private final ProjectQueryRepository projectQueryRepository;
 
-	public List<ProjectResponse> getProjects() {
-		return projectQueryRepository.findAllProjects();
+	public PageResponse<ProjectResponse> getProjects(PageRequestParam pageRequest) {
+		return projectQueryRepository.findAllProjects(pageRequest);
 	}
 
 	public ProjectResponse getProject(Long id) {

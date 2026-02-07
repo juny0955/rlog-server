@@ -1,7 +1,5 @@
 package junyoung.dev.rlogserver.project.api.project;
 
-import java.util.List;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -9,9 +7,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
+import junyoung.dev.rlogserver.global.pagination.PageRequestParam;
+import junyoung.dev.rlogserver.global.pagination.PageResponse;
 import junyoung.dev.rlogserver.project.api.project.dto.CreateProjectRequest;
 import junyoung.dev.rlogserver.project.api.project.dto.CreateProjectResponse;
 import junyoung.dev.rlogserver.project.api.project.dto.ProjectKeyResponse;
@@ -35,9 +36,11 @@ public class ProjectController {
 	}
 
 	@GetMapping
-	public ResponseEntity<List<ProjectResponse>> getProjects() {
-		List<ProjectResponse> responses = projectQueryService.getProjects();
-		return ResponseEntity.ok(responses);
+	public ResponseEntity<PageResponse<ProjectResponse>> getProjects(
+		@RequestParam(required = false) Integer page,
+		@RequestParam(required = false) Integer size) {
+		PageResponse<ProjectResponse> response = projectQueryService.getProjects(PageRequestParam.of(page, size));
+		return ResponseEntity.ok(response);
 	}
 
 	@GetMapping("/{id}")

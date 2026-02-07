@@ -19,6 +19,8 @@ import junyoung.dev.rlogserver.agent.inbound.api.dto.AgentSummaryResponse;
 import junyoung.dev.rlogserver.agent.inbound.api.dto.UpdateAgentNameRequest;
 import junyoung.dev.rlogserver.agent.service.command.AgentCommandService;
 import junyoung.dev.rlogserver.agent.service.query.AgentQueryService;
+import junyoung.dev.rlogserver.global.pagination.PageRequestParam;
+import junyoung.dev.rlogserver.global.pagination.PageResponse;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -30,9 +32,12 @@ public class AgentController {
 	private final AgentCommandService agentCommandService;
 
 	@GetMapping
-	public ResponseEntity<List<AgentResponse>> getAgents(@RequestParam Long projectId) {
-		List<AgentResponse> responses = agentQueryService.getAgents(projectId);
-		return ResponseEntity.ok(responses);
+	public ResponseEntity<PageResponse<AgentResponse>> getAgents(
+		@RequestParam Long projectId,
+		@RequestParam(required = false) Integer page,
+		@RequestParam(required = false) Integer size) {
+		PageResponse<AgentResponse> response = agentQueryService.getAgents(projectId, PageRequestParam.of(page, size));
+		return ResponseEntity.ok(response);
 	}
 
 	@GetMapping("/{id}")

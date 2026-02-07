@@ -15,6 +15,8 @@ import junyoung.dev.rlogserver.agent.inbound.api.dto.AgentResponse;
 import junyoung.dev.rlogserver.agent.inbound.api.dto.AgentSummaryResponse;
 import junyoung.dev.rlogserver.agent.repository.entity.AgentAccessStatus;
 import junyoung.dev.rlogserver.agent.repository.entity.AgentStatus;
+import junyoung.dev.rlogserver.global.pagination.PageRequestParam;
+import junyoung.dev.rlogserver.global.pagination.PageResponse;
 import lombok.RequiredArgsConstructor;
 
 @Repository
@@ -23,19 +25,29 @@ public class AgentQueryRepository {
 
 	private final DSLContext dsl;
 
-	public List<AgentResponse> findAgentsByProjectId(Long projectId) {
-		return dsl.select(
+	public PageResponse<AgentResponse> findAgentsByProjectId(Long projectId, PageRequestParam pageRequest) {
+		long totalElements = dsl.selectCount()
+			.from(AGENTS)
+			.where(AGENTS.PROJECT_ID.eq(projectId))
+			.fetchOne(0, long.class);
+
+		List<AgentResponse> content = dsl.select(
 				AGENTS.ID, AGENTS.NAME, AGENTS.STATUS,
 				AGENTS.HOSTNAME, AGENTS.IP, AGENTS.OS, AGENTS.OS_VERSION,
 				AGENTS.LAST_SEEN_AT, AGENTS.CREATED_AT)
 			.from(AGENTS)
 			.where(AGENTS.PROJECT_ID.eq(projectId))
+			.orderBy(AGENTS.CREATED_AT.desc())
+			.offset(pageRequest.offset())
+			.limit(pageRequest.size())
 			.fetch(r -> new AgentResponse(
 				r.get(AGENTS.ID), r.get(AGENTS.NAME),
 				AgentStatus.valueOf(r.get(AGENTS.STATUS)),
 				r.get(AGENTS.HOSTNAME), r.get(AGENTS.IP),
 				r.get(AGENTS.OS), r.get(AGENTS.OS_VERSION),
 				r.get(AGENTS.LAST_SEEN_AT), r.get(AGENTS.CREATED_AT)));
+
+		return PageResponse.of(content, pageRequest.page(), pageRequest.size(), totalElements);
 	}
 
 	public Optional<AgentDetailResponse> findAgentById(Long id) {
